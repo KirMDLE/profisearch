@@ -1,6 +1,7 @@
 ###(модели пользователей, мастеров и заказов)
 ###SQLAlchemy — это, пожалуй, самая популярная библиотека для работы с базами данных в Python, реализующая паттерн ORM (Object Relational Mapping). ORM позволяет описывать таблицы базы данных в виде классов Python, что значительно упрощает взаимодействие с данными в приложении.
 
+from typing import Optional
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Enum
 from sqlalchemy.orm import relationship
 from app.database import Base

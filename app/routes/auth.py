@@ -1,7 +1,7 @@
 ###(регистрация и авторизация)
 
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
@@ -41,9 +41,10 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post('/login', response_model=schemas.Token)
-def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+def login(user: schemas.UserLogin,response: Response, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.password):
+    if not db_user or not verify_password(user.password, db_user.hashed_password):
+
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
     refresh_token = create_refresh_toket(data={"sub": db_user.email})
@@ -52,6 +53,16 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
         data={"sub": db_user.email},
         expires_delta=access_token_expires
     )
+    response.set_cookie(
+    key="refresh_token",
+    value=refresh_token,
+    httponly=True,  # чтобы JS не имел доступа (XSS-защита)
+    samesite="lax",  # защита от CSRF
+    secure=False,  # True — если только по HTTPS (в проде)
+    max_age=60 * 60 * 24 * 7,  # 7 дней в секундах
+    expires=60 * 60 * 24 * 7,
+    path="/"
+)
 
     return {
         "message": "Вход успешен",

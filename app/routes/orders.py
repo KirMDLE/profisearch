@@ -1,5 +1,6 @@
 ###(создание заказов для мастеров)
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+import asyncio
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile,BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
@@ -16,9 +17,12 @@ def get_db():
     finally:
         db.close()
 
+def send_notification(order_id: int):
+    return f'Ваш заказ №{order_id} принят!'
+
 
 @router.post('/create_order')
-def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
+def create_order(order: schemas.OrderCreate,bg_task: BackgroundTasks, db: Session = Depends(get_db)):
     client = db.query(models.User).filter(models.User.id == order.client_id).first()
     if not client:
         raise HTTPException(status_code=404, detail="Клиент не найден")
@@ -38,5 +42,9 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
+
+    bg_task.add_task(send_notification)
+    
+    #asyncio.create_task(send_notification())
 
     return {'message':  "Заказ успешно создан"}

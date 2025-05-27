@@ -1,17 +1,16 @@
 from datetime import datetime, timedelta
-import token
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from requests import Session
+from sqlalchemy.orm import Session 
 from app.dependencies import get_db
 
 from app import models
 from app.models import User
  
 
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = "secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
@@ -20,9 +19,7 @@ oauth_scheme = OAuth2PasswordBearer(tokenUrl='/login')
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(None)):
-    from app.routes.auth import get_db  
-    db = get_db()
+def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = payload.get("sub")
@@ -49,7 +46,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def create_refresh_toket(data: dict, expires_delta: timedelta | None = None):
+def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     expire = datetime.utcnow() + (expires_delta or timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))
     to_encode = data.copy()
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)

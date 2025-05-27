@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
-from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_toket, get_password_hash, verify_password
+from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_token, get_password_hash, verify_password
 from app.dependencies import get_db
 
 

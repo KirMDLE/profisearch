@@ -1,5 +1,5 @@
 ###(создание заказов для мастеров)
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
@@ -27,10 +27,12 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     if not master:
         raise HTTPException(status_code=404, detail="Мастер не найден")
 
+
     new_order = models.Order(
         client_id = client.id,
         master_id = master.id,
-        description = order.description
+        description = order.description,
+        
     )
 
     db.add(new_order)

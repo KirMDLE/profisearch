@@ -28,4 +28,10 @@ manager = ConnectionManager()
 
 @router.websocket("/ws/chat/{order_id}")
 async def websocket_endpoint(websocket: WebSocket, order_id: int):
-    ...
+    await manager.connect(order_id, websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await manager.broadcast(order_id, data)
+    except WebSocketDisconnect:
+        manager.disconnect(order_id, websocket)

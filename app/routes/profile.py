@@ -1,8 +1,8 @@
 # profile.py
 
 from fastapi import APIRouter, Depends
-from ..security import get_current_user
-from .. import models
+from app.security import get_current_user
+from app import models
 
 router = APIRouter()
 

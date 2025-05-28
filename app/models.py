@@ -12,6 +12,13 @@ class UserRole(str, enum.Enum):
     client = "client"
     master = "master"
 
+class OrderStatus(enum.Enum):
+    new = 'new' 
+    in_progress = 'in_progress'
+    completed = 'completed'
+    cancelled = 'cancelled'
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -40,4 +47,8 @@ class Order(Base):
     client_id = Column(Integer, ForeignKey("users.id"))
     master_id = Column(Integer, ForeignKey("masters_profiles.id"))
     description = Column(Text)
+    
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    status = Column(Enum(OrderStatus), default=OrderStatus.new)

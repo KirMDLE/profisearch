@@ -6,19 +6,10 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models, schemas
 from app.security import get_current_user
-
+from app.dependencies import get_db
 
 
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.get('/master/{master_id}', dependencies=[Depends(get_current_user)], response_model=List[schemas.OrderRead])
 def get_client_orders(master_id: int, db: Session = Depends(get_db)):

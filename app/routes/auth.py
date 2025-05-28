@@ -8,17 +8,7 @@ from app import models, schemas
 from app.security import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, create_refresh_token, get_password_hash, verify_password
 from app.dependencies import get_db
 
-
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.post('/register')
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -47,7 +37,7 @@ def login(user: schemas.UserLogin,response: Response, db: Session = Depends(get_
 
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
-    refresh_token = create_refresh_toket(data={"sub": db_user.email})
+    refresh_token = create_refresh_token(data={"sub": db_user.email})
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.email},
@@ -56,10 +46,10 @@ def login(user: schemas.UserLogin,response: Response, db: Session = Depends(get_
     response.set_cookie(
     key="refresh_token",
     value=refresh_token,
-    httponly=True,  # чтобы JS не имел доступа (XSS-защита)
-    samesite="lax",  # защита от CSRF
-    secure=False,  # True — если только по HTTPS (в проде)
-    max_age=60 * 60 * 24 * 7,  # 7 дней в секундах
+    httponly=True,  
+    samesite="lax",  
+    secure=False,  
+    max_age=60 * 60 * 24 * 7,  
     expires=60 * 60 * 24 * 7,
     path="/"
 )

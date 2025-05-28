@@ -2,20 +2,10 @@
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile,BackgroundTasks
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
 from app import models, schemas
-
+from app.dependencies import get_db
 
 router = APIRouter(prefix='/orders', tags=['orders'])
-
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def send_notification(order_id: int):
     return f'Ваш заказ №{order_id} принят!'

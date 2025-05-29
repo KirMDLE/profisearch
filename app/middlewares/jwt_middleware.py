@@ -1,3 +1,4 @@
+from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request, HTTPException
 from jwt import decode, InvalidTokenError
@@ -7,7 +8,16 @@ ALGORITHM = 'HS256'
 
 class JWTMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
+        public_paths = [
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+            "/favicon.ico"
+        ]
 
+        if request.url.path in public_paths:
+            return await call_next(request)
+        
         token = request.headers.get("Authorization")
 
         if token:
@@ -19,7 +29,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
             except InvalidTokenError:
                 raise HTTPException(status_code=401, detail='invalid JWT token')
         else:
-            request.state.user = None
+            return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
 
         response = await call_next(request)
         return response

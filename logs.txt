@@ -1,0 +1,11 @@
+2025-05-29 17:04:19,404 | INFO | app | GET /docs -> Status: 401 | Time: 0.0004570484161376953s
+2025-05-29 17:04:19,710 | INFO | app | GET /favicon.ico -> Status: 401 | Time: 0.0002701282501220703s
+2025-05-29 17:04:47,953 | INFO | app | GET / -> Status: 401 | Time: 0.000820159912109375s
+2025-05-29 17:04:48,248 | INFO | app | GET /favicon.ico -> Status: 401 | Time: 0.00019693374633789062s
+2025-05-29 17:04:53,633 | INFO | app | GET /redoc -> Status: 401 | Time: 0.0004322528839111328s
+2025-05-29 17:04:53,778 | INFO | app | GET /favicon.ico -> Status: 401 | Time: 0.00026988983154296875s
+2025-05-29 17:04:58,933 | INFO | app | GET /redoc -> Status: 401 | Time: 0.0005600452423095703s
+2025-05-29 17:04:59,072 | INFO | app | GET /favicon.ico -> Status: 401 | Time: 0.00020575523376464844s
+2025-05-29 17:07:45,864 | INFO | app | GET /redoc -> Status: 200 | Time: 0.0007829666137695312s
+2025-05-29 17:07:52,161 | INFO | app | GET /docs -> Status: 200 | Time: 0.0008556842803955078s
+2025-05-29 17:07:52,337 | INFO | app | GET /openapi.json -> Status: 200 | Time: 0.009347915649414062s

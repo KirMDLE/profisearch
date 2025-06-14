@@ -23,3 +23,26 @@ class Post(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="posts")
+
+    from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from src.database import Base  
+
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False) 
+    author_id = Column(Integer, ForeignKey("users.id"), nullable=False)  
+    recipient_id = Column(Integer, ForeignKey("users.id"), nullable=False)  
+    
+    rating = Column(Float, nullable=False) 
+    comment = Column(String, nullable=True) 
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    order = relationship("Order", back_populates="reviews")
+    author = relationship("User", foreign_keys=[author_id])
+    recipient = relationship("User", foreign_keys=[recipient_id])
